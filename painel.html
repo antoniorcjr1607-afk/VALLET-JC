@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valet Pro — Painel</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap');
+:root{--bg:#0a0a0a;--surface:#141414;--surface2:#1c1c1c;--border:#2a2a2a;--accent:#f0c040;--green:#50c878;--red:#e05050;--text:#e8e8e8;--text2:#888}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100}
+.nav-logo{font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.1em;color:var(--accent)}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{padding:6px 16px;border-radius:4px;font-size:13px;cursor:pointer;border:none;background:transparent;color:var(--text2);transition:all .2s;font-family:'DM Sans',sans-serif}
+.nav-tab.active{background:var(--accent);color:#000;font-weight:600}
+.nav-tab:hover:not(.active){background:var(--surface2);color:var(--text)}
+.page{display:none;padding:28px 24px;max-width:960px;margin:0 auto}
+.page.active{display:block}
+.box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:22px;margin-bottom:20px}
+.box-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.fg label{font-size:12px;color:var(--text2)}
+.fg input,.fg textarea{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;color:var(--text);font-family:'DM Mono',monospace;font-size:14px;outline:none;transition:border-color .2s}
+.fg input:focus{border-color:var(--accent)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{padding:10px 18px;border-radius:4px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;transition:all .2s}
+.btn-y{background:var(--accent);color:#000}.btn-y:hover{background:#f5d060}
+.btn-s{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-s:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.badge{display:inline-flex;align-items:center;justify-content:center;background:var(--red);color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;margin-left:6px;animation:badgepop .3s ease}
+@keyframes badgepop{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+
+/* CHAMADAS */
+.call-list{display:flex;flex-direction:column;gap:10px}
+.call-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;display:flex;align-items:center;gap:16px;transition:all .3s}
+.call-item.new{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);animation:callpop .4s ease}
+@keyframes callpop{0%{transform:translateY(-8px);opacity:0}100%{transform:translateY(0);opacity:1}}
+.call-num{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:var(--accent);min-width:60px;text-align:center}
+.call-info{flex:1}
+.call-evento{font-size:12px;color:var(--text2);margin-bottom:3px}
+.call-msg{font-size:14px;font-weight:500}
+.call-time{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:3px}
+.call-actions{display:flex;gap:6px}
+.empty{color:var(--text2);font-size:14px;text-align:center;padding:48px}
+.empty .icon{font-size:40px;margin-bottom:12px}
+
+/* GRID CARTÕES */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+.vcard{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;transition:border-color .3s}
+.vcard.called{border-color:var(--accent)}
+.vcard.delivered{border-color:var(--green);opacity:.5}
+.vcard-num{font-family:'DM Mono',monospace;font-size:26px;font-weight:500;color:var(--accent);margin-bottom:3px}
+.vcard-plate{font-size:11px;color:var(--text2);margin-bottom:10px;font-family:'DM Mono',monospace}
+.vcard-qr{display:flex;justify-content:center;margin-bottom:10px}
+.vcard-qr img{border-radius:6px;border:3px solid #fff}
+.vstatus{font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px}
+.s-wait{background:#1a1a1a;color:var(--text2)}
+.s-call{background:#3a2800;color:var(--accent)}
+.s-done{background:#0a2a0a;color:var(--green)}
+.vcard-actions{display:flex;gap:5px;justify-content:center}
+.vcard-time{font-size:10px;color:var(--text2);margin-top:6px;font-family:'DM Mono',monospace}
+
+.info{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px 16px;font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.6}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.st{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2)}
+.pulse{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:6px;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+@media print{
+  nav,.page:not(#print-area){display:none!important}
+  #print-area{display:grid!important;grid-template-columns:repeat(3,1fr);gap:12px;padding:12px}
+  .pcrd{border:2px dashed #444;border-radius:8px;padding:14px;text-align:center;break-inside:avoid;background:#fff}
+  .pcrd .pnum{font-size:34px;font-weight:700;font-family:monospace;color:#000}
+  .pcrd .pbrand{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#666;margin-bottom:6px}
+  .pcrd .pinstr{font-size:9px;color:#555;margin-top:8px}
+  .pcrd .pqr{display:flex;justify-content:center;margin:8px 0}
+}
+#print-area{display:none}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">⬡ VALET PRO</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('chamadas',this)">
+      🔔 Chamadas<span class="badge" id="badge" style="display:none">0</span>
+    </button>
+    <button class="nav-tab" onclick="showPage('painel',this)">Veículos</button>
+    <button class="nav-tab" onclick="showPage('config',this)">Configurar</button>
+  </div>
+</nav>
+
+<!-- CHAMADAS -->
+<div class="page active" id="page-chamadas">
+  <div class="sh">
+    <span class="st"><span class="pulse"></span>Ao vivo</span>
+    <button class="btn btn-s btn-sm" onclick="clearCalls()">Limpar</button>
+  </div>
+  <div class="call-list" id="call-list">
+    <div class="empty"><div class="icon">🔔</div>Aguardando chamadas...</div>
+  </div>
+</div>
+
+<!-- PAINEL VEÍCULOS -->
+<div class="page" id="page-painel">
+  <div class="box">
+    <div class="box-title">Registrar Veículo</div>
+    <div class="form-row">
+      <div class="fg"><label>Número do Cartão (1–300)</label>
+        <input type="number" id="inp-num" placeholder="Ex: 42" min="1" max="300"></div>
+      <div class="fg"><label>Placa (opcional)</label>
+        <input type="text" id="inp-plate" placeholder="ABC-1234" maxlength="8" style="text-transform:uppercase"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-y" onclick="addCard()">+ Registrar</button>
+      <button class="btn btn-s" onclick="printCards()">🖨 Imprimir QR Codes</button>
+      <button class="btn btn-s btn-sm" onclick="clearAll()" style="color:var(--red)">Limpar Tudo</button>
+    </div>
+  </div>
+  <div class="sh"><span class="st">Veículos Registrados</span></div>
+  <div class="cards-grid" id="cards-grid">
+    <div class="empty"><div class="icon">🚗</div>Nenhum veículo ainda</div>
+  </div>
+</div>
+
+<!-- CONFIGURAR -->
+<div class="page" id="page-config">
+  <div class="box">
+    <div class="box-title">Configurações do Evento</div>
+    <div class="fg"><label>Nome do Evento / Empresa</label>
+      <input type="text" id="cfg-name" placeholder="Ex: Casamento Ray"></div>
+    <div class="fg"><label>Mensagem de agradecimento ao cliente</label>
+      <textarea id="cfg-thanks" rows="3" style="resize:vertical;font-family:'DM Sans',sans-serif;font-size:13px"
+        placeholder="Ex: Olá! Helinho Eventos agradece. Seu carro já está sendo buscado!"></textarea></div>
+    <button class="btn btn-y" onclick="saveConfig()">Salvar</button>
+  </div>
+  <div class="box">
+    <div class="box-title">Link do Painel (compartilhe com o coordenador)</div>
+    <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);word-break:break-all;padding:10px;background:var(--surface2);border-radius:4px" id="painel-link">
+      Salve as configurações para gerar o link
+    </div>
+    <button class="btn btn-s btn-sm" style="margin-top:10px" onclick="copyLink()">Copiar link</button>
+  </div>
+  <div class="box">
+    <div class="box-title">Como Funciona</div>
+    <div style="font-size:13px;color:var(--text2);line-height:2">
+      <p>1. Configure o nome do evento e a mensagem de agradecimento</p>
+      <p>2. Registre os veículos e imprima os QR Codes</p>
+      <p>3. O coordenador abre este painel no celular ou tablet</p>
+      <p>4. Cliente lê o QR → página abre → toca em "Avisar que estou saindo"</p>
+      <p>5. Notificação aparece aqui em tempo real com o número do cartão</p>
+      <p>6. Sem WhatsApp — sem expor número de ninguém</p>
+    </div>
+  </div>
+</div>
+
+<div id="print-area"></div>
+
+<script>
+var cards  = JSON.parse(localStorage.getItem('vp2_cards')  || '[]');
+var calls  = JSON.parse(localStorage.getItem('vp2_calls')  || '[]');
+var config = JSON.parse(localStorage.getItem('vp2_config') || '{}');
+config.name   = config.name   || 'Valet Pro';
+config.thanks = config.thanks || 'Olá! Helinho Eventos agradece e já está buscando seu veículo. Aguarde alguns instantes — seu carro estará pronto na saída. Obrigado!';
+config.key    = config.key    || Math.random().toString(36).substr(2,8);
+
+document.getElementById('cfg-name').value   = config.name;
+document.getElementById('cfg-thanks').value = config.thanks;
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(id==='chamadas')renderCalls();
+  if(id==='painel')renderCards();
+}
+
+function saveConfig(){
+  config.name   = document.getElementById('cfg-name').value.trim()||'Valet Pro';
+  config.thanks = document.getElementById('cfg-thanks').value.trim()||'Obrigado!';
+  localStorage.setItem('vp2_config',JSON.stringify(config));
+  renderCards();
+  updatePainelLink();
+  alert('Salvo! Registre os veículos e imprima os QR Codes.');
+}
+
+function updatePainelLink(){
+  var url = window.location.href.split('?')[0];
+  document.getElementById('painel-link').textContent = url + '?painel=1&k=' + config.key;
+}
+
+function copyLink(){
+  var url = window.location.href.split('?')[0] + '?painel=1&k=' + config.key;
+  navigator.clipboard.writeText(url).then(function(){alert('Link copiado!')});
+}
+
+// URL da página do cliente
+function clientPageURL(num, plate){
+  var base = window.location.href.split('?')[0].replace('painel.html','cliente.html');
+  var t = encodeURIComponent(config.thanks);
+  var e = encodeURIComponent(config.name);
+  var url = base + '?n=' + num + '&e=' + e + '&k=' + config.key + '&t=' + t;
+  return url;
+}
+
+function qrSrc(num, plate){
+  var url = clientPageURL(num, plate);
+  return 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=8&ecc=M&data=' + encodeURIComponent(url);
+}
+
+function save(){
+  localStorage.setItem('vp2_cards',JSON.stringify(cards));
+  localStorage.setItem('vp2_calls',JSON.stringify(calls));
+}
+
+// CARTÕES
+function addCard(){
+  var num=parseInt(document.getElementById('inp-num').value);
+  var plate=document.getElementById('inp-plate').value.trim().toUpperCase();
+  if(!num||num<1||num>300){alert('Informe número entre 1 e 300');return}
+  if(cards.find(function(c){return c.num===num})){alert('Número já registrado');return}
+  cards.push({num:num,plate:plate,status:'waiting',
+    time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})});
+  cards.sort(function(a,b){return a.num-b.num});
+  save();renderCards();
+  document.getElementById('inp-num').value='';
+  document.getElementById('inp-plate').value='';
+}
+
+function markDelivered(num){
+  var c=cards.find(function(c){return c.num===num});
+  if(c){c.status='delivered';save();renderCards()}
+}
+function removeCard(num){cards=cards.filter(function(c){return c.num!==num});save();renderCards()}
+function clearAll(){if(!confirm('Limpar todos?'))return;cards=[];save();renderCards()}
+
+function renderCards(){
+  var grid=document.getElementById('cards-grid');
+  if(!cards.length){
+    grid.innerHTML='<div class="empty"><div class="icon">🚗</div>Nenhum veículo ainda</div>';
+    return;
+  }
+  grid.innerHTML=cards.map(function(c){
+    var scls=c.status==='waiting'?'s-wait':c.status==='called'?'s-call':'s-done';
+    var slbl=c.status==='waiting'?'Aguardando':c.status==='called'?'⚡ Chamado':'✓ Entregue';
+    var src=qrSrc(c.num,c.plate);
+    return '<div class="vcard '+c.status+'">'+
+      '<div class="vcard-num">#'+c.num+'</div>'+
+      '<div class="vcard-plate">'+(c.plate||'—')+'</div>'+
+      '<div class="vcard-qr"><img src="'+src+'" width="110" height="110" alt="QR #'+c.num+'"></div>'+
+      '<div class="vstatus '+scls+'">'+slbl+'</div>'+
+      '<div class="vcard-actions">'+
+        '<button class="btn btn-s btn-sm" onclick="markDelivered('+c.num+')">Entregue</button>'+
+        '<button class="btn btn-sm" style="background:var(--surface2);color:var(--red);border:1px solid var(--border)" onclick="removeCard('+c.num+')">✕</button>'+
+      '</div>'+
+      '<div class="vcard-time">'+c.time+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+// CHAMADAS — polling do localStorage
+function checkNewCalls(){
+  var key='valet_calls_'+config.key;
+  try{
+    var stored=JSON.parse(localStorage.getItem(key)||'[]');
+    if(stored.length>calls.length){
+      var newOnes=stored.slice(0,stored.length-calls.length);
+      newOnes.forEach(function(c){
+        calls.unshift(c);
+        // Marcar cartão como chamado
+        var card=cards.find(function(v){return String(v.num)===String(c.num)});
+        if(card&&card.status==='waiting'){card.status='called';save()}
+        // Som de notificação
+        try{
+          var ctx=new(window.AudioContext||window.webkitAudioContext)();
+          var osc=ctx.createOscillator();
+          var gain=ctx.createGain();
+          osc.connect(gain);gain.connect(ctx.destination);
+          osc.frequency.value=880;gain.gain.value=0.3;
+          osc.start();osc.stop(ctx.currentTime+0.15);
+          setTimeout(function(){osc2Start()},200);
+          function osc2Start(){
+            var o=ctx.createOscillator();var g=ctx.createGain();
+            o.connect(g);g.connect(ctx.destination);
+            o.frequency.value=1100;g.gain.value=0.3;
+            o.start();o.stop(ctx.currentTime+0.15);
+          }
+        }catch(e){}
+      });
+      save();
+      renderCalls();
+      updateBadge(newOnes.length);
+    }
+    localStorage.setItem(key,JSON.stringify(calls));
+  }catch(e){}
+}
+
+function renderCalls(){
+  var list=document.getElementById('call-list');
+  if(!calls.length){
+    list.innerHTML='<div class="empty"><div class="icon">🔔</div>Aguardando chamadas...</div>';
+    return;
+  }
+  list.innerHTML=calls.map(function(c,i){
+    return '<div class="call-item '+(i===0&&c.new_?'new':'')+'">'+
+      '<div class="call-num">#'+c.num+'</div>'+
+      '<div class="call-info">'+
+        '<div class="call-evento">'+c.evento+'</div>'+
+        '<div class="call-msg">Cliente saindo — buscar veículo</div>'+
+        '<div class="call-time">'+c.time+'</div>'+
+      '</div>'+
+      '<div class="call-actions">'+
+        '<button class="btn btn-y btn-sm" onclick="markCallDone('+c.ts+')">✓ Buscar</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function markCallDone(ts){
+  calls=calls.filter(function(c){return c.ts!==ts});
+  save();renderCalls();
+}
+
+function clearCalls(){
+  calls=[];
+  localStorage.removeItem('valet_calls_'+config.key);
+  save();renderCalls();updateBadge(0);
+}
+
+var prevBadge=0;
+function updateBadge(add){
+  prevBadge+=add;
+  var b=document.getElementById('badge');
+  if(prevBadge>0){b.textContent=prevBadge;b.style.display='inline-flex'}
+  else b.style.display='none';
+}
+
+// IMPRESSÃO
+function printCards(){
+  if(!cards.length){alert('Nenhum cartão registrado');return}
+  var area=document.getElementById('print-area');
+  area.innerHTML=cards.map(function(c){
+    var src=qrSrc(c.num,c.plate);
+    return '<div class="pcrd">'+
+      '<div class="pbrand">'+config.name+'</div>'+
+      '<div class="pnum">#'+c.num+'</div>'+
+      (c.plate?'<div style="font-size:12px;margin:3px 0;color:#333">'+c.plate+'</div>':'')+
+      '<div class="pqr"><img src="'+src+'" width="100" height="100"></div>'+
+      '<div class="pinstr">Leia o QR quando quiser ir embora</div>'+
+    '</div>';
+  }).join('');
+  setTimeout(function(){window.print()},1000);
+}
+
+// Init
+updatePainelLink();
+renderCalls();
+renderCards();
+// Polling a cada 3 segundos
+setInterval(checkNewCalls,3000);
+</script>
+</body>
+</html>
