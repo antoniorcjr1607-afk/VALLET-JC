@@ -98,15 +98,16 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
 <div class="page" id="page-painel">
   <div class="box">
     <div class="box-title">Registrar Veículo</div>
-    <div class="form-row">
-      <div class="fg"><label>Número do Cartão (1–300)</label>
+    <div class="form-row" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="fg"><label>Número do Cartão</label>
         <input type="number" id="inp-num" placeholder="Ex: 42" min="1" max="300"></div>
-      <div class="fg"><label>Placa (opcional)</label>
-        <input type="text" id="inp-plate" placeholder="ABC-1234" maxlength="8" style="text-transform:uppercase"></div>
+      <div class="fg"><label>Nome do Cliente</label>
+        <input type="text" id="inp-cliente" placeholder="Ex: João Silva"></div>
+      <div class="fg"><label>Manobrista Responsável</label>
+        <input type="text" id="inp-manobrista" placeholder="Ex: Carlos"></div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-y" onclick="addCard()">+ Registrar</button>
-      <button class="btn btn-s" onclick="printCards()">🖨 Imprimir QR Codes</button>
       <button class="btn btn-s btn-sm" onclick="clearAll()" style="color:var(--red)">Limpar Tudo</button>
     </div>
   </div>
@@ -274,15 +275,17 @@ function saveCards(){ localStorage.setItem('vp3_cards', JSON.stringify(cards)); 
 
 window.addCard = function(){
   var num   = parseInt(document.getElementById('inp-num').value);
-  var plate = document.getElementById('inp-plate').value.trim().toUpperCase();
-  if(!num||num<1||num>300){alert('Informe número entre 1 e 300');return}
+  var cliente = document.getElementById('inp-cliente').value.trim();
+  var manobrista = document.getElementById('inp-manobrista').value.trim();
+  if(!num||num<1){alert('Informe o número do cartão');return}
   if(cards.find(function(c){return c.num===num})){alert('Número já registrado');return}
-  cards.push({num:num,plate:plate,status:'waiting',
+  cards.push({num:num,cliente:cliente,manobrista:manobrista,status:'waiting',
     time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})});
   cards.sort(function(a,b){return a.num-b.num});
   saveCards(); renderCards();
   document.getElementById('inp-num').value='';
-  document.getElementById('inp-plate').value='';
+  document.getElementById('inp-cliente').value='';
+  document.getElementById('inp-manobrista').value='';
 }
 
 window.markDelivered = function(num){
@@ -309,7 +312,8 @@ function renderCards(){
     var slbl=c.status==='waiting'?'Aguardando':c.status==='called'?'⚡ Chamado':'✓ Entregue';
     return '<div class="vcard '+c.status+'">'+
       '<div class="vcard-num">#'+c.num+'</div>'+
-      '<div class="vcard-plate">'+(c.plate||'—')+'</div>'+
+      '<div class="vcard-plate">'+(c.cliente||'—')+'</div>'+
+      '<div style="font-size:10px;color:var(--text2);margin-bottom:8px;font-family:'DM Mono',monospace">'+(c.manobrista?'🔧 '+c.manobrista:'')+'</div>'+
       '<div class="vcard-qr"><img src="'+qrSrc(c.num,c.plate)+'" width="110" height="110" alt="QR"></div>'+
       '<div class="vstatus '+scls+'">'+slbl+'</div>'+
       '<div class="vcard-actions">'+
