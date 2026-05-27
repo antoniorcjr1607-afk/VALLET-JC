@@ -23,7 +23,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
 .fg label{font-size:12px;color:var(--text2)}
 .fg input,.fg textarea{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;color:var(--text);font-family:'DM Mono',monospace;font-size:14px;outline:none;transition:border-color .2s}
 .fg input:focus{border-color:var(--accent)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
 .btn{padding:10px 18px;border-radius:4px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;transition:all .2s}
 .btn-y{background:var(--accent);color:#000}.btn-y:hover{background:#f5d060}
 .btn-s{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
@@ -32,14 +32,13 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
 .btn-sm{padding:6px 12px;font-size:12px}
 .badge{display:inline-flex;align-items:center;justify-content:center;background:var(--red);color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;margin-left:6px}
 .call-list{display:flex;flex-direction:column;gap:10px}
-.call-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;display:flex;align-items:center;gap:16px;animation:callpop .4s ease}
+.call-item{background:var(--surface);border:1px solid var(--accent);border-radius:8px;padding:16px 20px;display:flex;align-items:center;gap:16px;animation:callpop .4s ease}
 @keyframes callpop{0%{transform:translateY(-8px);opacity:0}100%{transform:translateY(0);opacity:1}}
-.call-item.new{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .call-num{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:var(--accent);min-width:60px;text-align:center}
 .call-info{flex:1}
-.call-evento{font-size:12px;color:var(--text2);margin-bottom:3px}
-.call-msg{font-size:14px;font-weight:500}
-.call-time{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:3px}
+.call-name{font-size:15px;font-weight:600;margin-bottom:2px}
+.call-detail{font-size:12px;color:var(--text2);margin-bottom:3px}
+.call-time{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace}
 .call-actions{display:flex;gap:6px}
 .empty{color:var(--text2);font-size:14px;text-align:center;padding:48px}
 .empty .icon{font-size:40px;margin-bottom:12px}
@@ -48,7 +47,8 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
 .vcard.called{border-color:var(--accent)}
 .vcard.delivered{border-color:var(--green);opacity:.5}
 .vcard-num{font-family:'DM Mono',monospace;font-size:26px;font-weight:500;color:var(--accent);margin-bottom:3px}
-.vcard-plate{font-size:11px;color:var(--text2);margin-bottom:10px;font-family:'DM Mono',monospace}
+.vcard-cliente{font-size:12px;color:var(--text);margin-bottom:2px;font-weight:500}
+.vcard-manobrista{font-size:10px;color:var(--text2);margin-bottom:10px}
 .vcard-qr{display:flex;justify-content:center;margin-bottom:10px}
 .vcard-qr img{border-radius:6px;border:3px solid #fff}
 .vstatus{font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px}
@@ -61,30 +61,22 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
 .st{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2)}
 .pulse{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:6px;animation:blink 1.5s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-@media print{
-  nav,.page:not(#print-area){display:none!important}
-  #print-area{display:grid!important;grid-template-columns:repeat(3,1fr);gap:12px;padding:12px}
-  .pcrd{border:2px dashed #444;border-radius:8px;padding:14px;text-align:center;break-inside:avoid;background:#fff}
-  .pcrd .pnum{font-size:34px;font-weight:700;font-family:monospace;color:#000}
-  .pcrd .pbrand{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#666;margin-bottom:6px}
-  .pcrd .pinstr{font-size:9px;color:#555;margin-top:8px}
-  .pcrd .pqr{display:flex;justify-content:center;margin:8px 0}
-}
-#print-area{display:none}
 </style>
 </head>
 <body>
+
 <nav>
   <div class="nav-logo">⬡ VALET PRO</div>
   <div class="nav-tabs">
-    <button class="nav-tab active" id="tab-chamadas" data-page="chamadas">
+    <button class="nav-tab active" id="tab-chamadas" onclick="showTab('chamadas')">
       🔔 Chamadas<span class="badge" id="badge" style="display:none">0</span>
     </button>
-    <button class="nav-tab" id="tab-painel" data-page="painel">Veículos</button>
-    <button class="nav-tab" id="tab-config" data-page="config">Configurar</button>
+    <button class="nav-tab" id="tab-painel" onclick="showTab('painel')">Veículos</button>
+    <button class="nav-tab" id="tab-config" onclick="showTab('config')">Configurar</button>
   </div>
 </nav>
 
+<!-- CHAMADAS -->
 <div class="page active" id="page-chamadas">
   <div class="sh">
     <span class="st"><span class="pulse"></span>Ao vivo</span>
@@ -95,16 +87,23 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
   </div>
 </div>
 
+<!-- VEÍCULOS -->
 <div class="page" id="page-painel">
   <div class="box">
     <div class="box-title">Registrar Veículo</div>
-    <div class="form-row" style="grid-template-columns:1fr 1fr 1fr">
-      <div class="fg"><label>Número do Cartão</label>
-        <input type="number" id="inp-num" placeholder="Ex: 42" min="1" max="300"></div>
-      <div class="fg"><label>Nome do Cliente</label>
-        <input type="text" id="inp-cliente" placeholder="Ex: João Silva"></div>
-      <div class="fg"><label>Manobrista Responsável</label>
-        <input type="text" id="inp-manobrista" placeholder="Ex: Carlos"></div>
+    <div class="form-row">
+      <div class="fg">
+        <label>Número do Cartão</label>
+        <input type="number" id="inp-num" placeholder="Ex: 42" min="1">
+      </div>
+      <div class="fg">
+        <label>Nome do Cliente</label>
+        <input type="text" id="inp-cliente" placeholder="Ex: João Silva">
+      </div>
+      <div class="fg">
+        <label>Manobrista Responsável</label>
+        <input type="text" id="inp-manobrista" placeholder="Ex: Carlos">
+      </div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-y" onclick="addCard()">+ Registrar</button>
@@ -117,20 +116,25 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
   </div>
 </div>
 
+<!-- CONFIGURAR -->
 <div class="page" id="page-config">
   <div class="box">
     <div class="box-title">Configurações do Evento</div>
-    <div class="fg"><label>Nome do Evento / Empresa</label>
-      <input type="text" id="cfg-name" placeholder="Ex: Casamento Ray"></div>
-    <div class="fg"><label>Mensagem de agradecimento ao cliente</label>
-      <textarea id="cfg-thanks" rows="3" style="resize:vertical;font-family:'DM Sans',sans-serif;font-size:13px"></textarea></div>
+    <div class="fg">
+      <label>Nome do Evento / Empresa</label>
+      <input type="text" id="cfg-name" placeholder="Ex: Casamento Ray">
+    </div>
+    <div class="fg">
+      <label>Mensagem de agradecimento ao cliente</label>
+      <textarea id="cfg-thanks" rows="3" style="resize:vertical;font-family:'DM Sans',sans-serif;font-size:13px"></textarea>
+    </div>
     <button class="btn btn-y" onclick="saveConfig()">Salvar</button>
   </div>
   <div class="box">
     <div class="box-title">Como Funciona</div>
     <div style="font-size:13px;color:var(--text2);line-height:2">
       <p>1. Configure o nome do evento e mensagem de agradecimento</p>
-      <p>2. Registre os veículos e imprima os QR Codes</p>
+      <p>2. Registre os veículos na aba Veículos</p>
       <p>3. Coordenador abre este painel no celular — fica na aba Chamadas</p>
       <p>4. Cliente lê o QR → abre página → toca em "Avisar que estou saindo"</p>
       <p>5. Notificação aparece aqui em tempo real com som de alerta</p>
@@ -139,32 +143,48 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
   </div>
 </div>
 
-<div id="print-area"></div>
-
+<!-- SCRIPTS -->
 <script>
-// showPage precisa ser global — fora do module
-function showPage(id, btn){
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
-  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
-  document.getElementById('page-'+id).classList.add('active');
-  if(btn) btn.classList.add('active');
-  if(id==='chamadas'){
-    var b=document.getElementById('badge');
-    if(b){b.style.display='none';}
+// Navegação — função global fora do module
+function showTab(id) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+  if(id === 'chamadas') {
+    document.getElementById('badge').style.display = 'none';
+    badgeCount = 0;
   }
+  if(id === 'painel') renderCards();
 }
-function markDelivered(num){ window._markDelivered && window._markDelivered(num); }
-function removeCard(num){ window._removeCard && window._removeCard(num); }
-function clearAll(){ window._clearAll && window._clearAll(); }
-function addCard(){ window._addCard && window._addCard(); }
-function saveConfig(){ window._saveConfig && window._saveConfig(); }
-function clearCalls(){ window._clearCalls && window._clearCalls(); }
-function doneCall(key){ window._doneCall && window._doneCall(key); }
-function printCards(){ window._printCards && window._printCards(); }
+
+var badgeCount = 0;
+
+function updateBadge() {
+  badgeCount++;
+  var b = document.getElementById('badge');
+  b.textContent = badgeCount;
+  b.style.display = 'inline-flex';
+}
+
+function alertSound() {
+  try {
+    var ctx = new(window.AudioContext || window.webkitAudioContext)();
+    [880, 1100].forEach(function(freq, i) {
+      setTimeout(function() {
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = freq; g.gain.value = 0.3;
+        o.start(); o.stop(ctx.currentTime + 0.15);
+      }, i * 200);
+    });
+  } catch(e) {}
+}
 </script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCjm-spHoSbPUJ62SYl_pJHdgoPzKscOAM",
@@ -193,188 +213,133 @@ var primeiraVez = true;
 var callKeys = {};
 
 onChildAdded(chamadasRef, function(snapshot) {
-  if(primeiraVez) return; // ignora chamadas antigas ao carregar
+  if(primeiraVez) return;
   var data = snapshot.val();
   var key  = snapshot.key;
   if(callKeys[key]) return;
   callKeys[key] = true;
-  addCallToUI(data, key, true);
+  addCallToUI(data, key);
   alertSound();
-  updateBadge(1);
-  // Marcar cartão como chamado
-  var card = cards.find(function(c){ return String(c.num) === String(data.num) });
-  if(card && card.status==='waiting'){ card.status='called'; saveCards(); renderCards(); }
+  updateBadge();
+  var card = cards.find(function(c){ return String(c.num) === String(data.num); });
+  if(card && card.status === 'waiting') { card.status = 'called'; saveCards(); renderCards(); }
 });
 
 setTimeout(function(){ primeiraVez = false; }, 2000);
 
-function addCallToUI(data, key, isNew){
-  var list = document.getElementById('call-list');
+function addCallToUI(data, key) {
+  var list  = document.getElementById('call-list');
   var empty = list.querySelector('.empty');
   if(empty) empty.remove();
   var div = document.createElement('div');
-  div.className = 'call-item' + (isNew?' new':'');
+  div.className = 'call-item';
   div.id = 'call-' + key;
   div.innerHTML =
-    '<div class="call-num">#'+data.num+'</div>'+
-    '<div class="call-info">'+
-      '<div class="call-evento">'+(data.evento||config.name)+'</div>'+
-      '<div class="call-msg">Cliente saindo — buscar veículo</div>'+
-      '<div class="call-time">'+data.time+'</div>'+
-    '</div>'+
-    '<div class="call-actions">'+
-      '<button class="btn btn-g btn-sm" onclick="doneCall(\''+key+'\')">✓ Buscar</button>'+
+    '<div class="call-num">#' + data.num + '</div>' +
+    '<div class="call-info">' +
+      '<div class="call-name">' + (data.cliente || '—') + '</div>' +
+      '<div class="call-detail">Manobrista: ' + (data.manobrista || '—') + '</div>' +
+      '<div class="call-time">' + data.time + '</div>' +
+    '</div>' +
+    '<div class="call-actions">' +
+      '<button class="btn btn-g btn-sm" onclick="doneCall(\'' + key + '\')">✓ Buscar</button>' +
     '</div>';
   list.insertBefore(div, list.firstChild);
 }
 
-window._doneCall = function(key){
+window.doneCall = function(key) {
   var el = document.getElementById('call-' + key);
   if(el) el.remove();
   remove(ref(db, 'chamadas/' + key));
   var list = document.getElementById('call-list');
   if(!list.querySelector('.call-item'))
     list.innerHTML = '<div class="empty"><div class="icon">🔔</div>Aguardando chamadas...</div>';
-}
+};
 
-window._clearCalls = function(){
+window.clearCalls = function() {
   remove(chamadasRef);
   document.getElementById('call-list').innerHTML =
     '<div class="empty"><div class="icon">🔔</div>Aguardando chamadas...</div>';
-  document.getElementById('badge').style.display='none';
-}
+  badgeCount = 0;
+  document.getElementById('badge').style.display = 'none';
+};
 
-var badgeCount = 0;
-function updateBadge(n){
-  badgeCount += n;
-  var b = document.getElementById('badge');
-  b.textContent = badgeCount;
-  b.style.display = 'inline-flex';
-}
-
-function alertSound(){
-  try{
-    var ctx = new(window.AudioContext||window.webkitAudioContext)();
-    [880,1100].forEach(function(freq,i){
-      setTimeout(function(){
-        var o=ctx.createOscillator(), g=ctx.createGain();
-        o.connect(g); g.connect(ctx.destination);
-        o.frequency.value=freq; g.gain.value=0.3;
-        o.start(); o.stop(ctx.currentTime+0.15);
-      }, i*200);
-    });
-  }catch(e){}
-}
-
-window._showPage = function(id, btn){
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
-  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
-  document.getElementById('page-'+id).classList.add('active');
-  if(btn) btn.classList.add('active');
-  if(id==='painel') renderCards();
-  if(id==='chamadas'){ badgeCount=0; document.getElementById('badge').style.display='none'; }
-}
-
-window._saveConfig = function(){
-  config.name   = document.getElementById('cfg-name').value.trim()||'Valet Pro';
-  config.thanks = document.getElementById('cfg-thanks').value.trim()||'Obrigado!';
+window.saveConfig = function() {
+  config.name   = document.getElementById('cfg-name').value.trim()   || 'Valet Pro';
+  config.thanks = document.getElementById('cfg-thanks').value.trim() || 'Obrigado!';
   localStorage.setItem('vp3_config', JSON.stringify(config));
   renderCards();
-  alert('Salvo!');
-}
+  alert('Configurações salvas!');
+};
 
-function clientPageURL(num, plate){
+function clientPageURL(num) {
   var base = window.location.href.split('painel.html')[0] + 'cliente.html';
-  return base + '?n='+num+'&e='+encodeURIComponent(config.name)+'&t='+encodeURIComponent(config.thanks);
+  return base + '?n=' + num + '&e=' + encodeURIComponent(config.name) + '&t=' + encodeURIComponent(config.thanks);
 }
 
-function qrSrc(num, plate){
-  return 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=8&ecc=M&data='+encodeURIComponent(clientPageURL(num,plate));
+function qrSrc(num) {
+  return 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=8&ecc=M&data=' + encodeURIComponent(clientPageURL(num));
 }
 
-function saveCards(){ localStorage.setItem('vp3_cards', JSON.stringify(cards)); }
+function saveCards() { localStorage.setItem('vp3_cards', JSON.stringify(cards)); }
 
-window._addCard = function(){
-  var num   = parseInt(document.getElementById('inp-num').value);
-  var cliente = document.getElementById('inp-cliente').value.trim();
+window.addCard = function() {
+  var num        = parseInt(document.getElementById('inp-num').value);
+  var cliente    = document.getElementById('inp-cliente').value.trim();
   var manobrista = document.getElementById('inp-manobrista').value.trim();
-  if(!num||num<1){alert('Informe o número do cartão');return}
-  if(cards.find(function(c){return c.num===num})){alert('Número já registrado');return}
-  cards.push({num:num,cliente:cliente,manobrista:manobrista,status:'waiting',
-    time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})});
-  cards.sort(function(a,b){return a.num-b.num});
+  if(!num || num < 1) { alert('Informe o número do cartão'); return; }
+  if(cards.find(function(c){ return c.num === num; })) { alert('Número já registrado'); return; }
+  cards.push({ num:num, cliente:cliente, manobrista:manobrista, status:'waiting',
+    time: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) });
+  cards.sort(function(a,b){ return a.num - b.num; });
   saveCards(); renderCards();
-  document.getElementById('inp-num').value='';
-  document.getElementById('inp-cliente').value='';
-  document.getElementById('inp-manobrista').value='';
-}
+  document.getElementById('inp-num').value = '';
+  document.getElementById('inp-cliente').value = '';
+  document.getElementById('inp-manobrista').value = '';
+};
 
-window._markDelivered = function(num){
-  var c=cards.find(function(c){return c.num===num});
-  if(c){c.status='delivered';saveCards();renderCards()}
-}
-window._removeCard = function(num){
-  cards=cards.filter(function(c){return c.num!==num});
-  saveCards();renderCards();
-}
-window._clearAll = function(){
-  if(!confirm('Limpar todos?'))return;
-  cards=[];saveCards();renderCards();
-}
+window.markDelivered = function(num) {
+  var c = cards.find(function(c){ return c.num === num; });
+  if(c) { c.status = 'delivered'; saveCards(); renderCards(); }
+};
 
-function renderCards(){
-  var grid=document.getElementById('cards-grid');
-  if(!cards.length){
-    grid.innerHTML='<div class="empty"><div class="icon">🚗</div>Nenhum veículo ainda</div>';
+window.removeCard = function(num) {
+  cards = cards.filter(function(c){ return c.num !== num; });
+  saveCards(); renderCards();
+};
+
+window.clearAll = function() {
+  if(!confirm('Limpar todos os veículos?')) return;
+  cards = []; saveCards(); renderCards();
+};
+
+window.renderCards = function() { renderCards(); };
+
+function renderCards() {
+  var grid = document.getElementById('cards-grid');
+  if(!cards.length) {
+    grid.innerHTML = '<div class="empty"><div class="icon">🚗</div>Nenhum veículo ainda</div>';
     return;
   }
-  grid.innerHTML=cards.map(function(c){
-    var scls=c.status==='waiting'?'s-wait':c.status==='called'?'s-call':'s-done';
-    var slbl=c.status==='waiting'?'Aguardando':c.status==='called'?'⚡ Chamado':'✓ Entregue';
-    return '<div class="vcard '+c.status+'">'+
-      '<div class="vcard-num">#'+c.num+'</div>'+
-      '<div class="vcard-plate">'+(c.cliente||'—')+'</div>'+
-      '<div style="font-size:10px;color:var(--text2);margin-bottom:8px;font-family:'DM Mono',monospace">'+(c.manobrista?'🔧 '+c.manobrista:'')+'</div>'+
-      '<div class="vcard-qr"><img src="'+qrSrc(c.num,c.plate)+'" width="110" height="110" alt="QR"></div>'+
-      '<div class="vstatus '+scls+'">'+slbl+'</div>'+
-      '<div class="vcard-actions">'+
-        '<button class="btn btn-s btn-sm" onclick="markDelivered('+c.num+')">Entregue</button>'+
-        '<button class="btn btn-sm" style="background:var(--surface2);color:var(--red);border:1px solid var(--border)" onclick="removeCard('+c.num+')">✕</button>'+
-      '</div>'+
-      '<div class="vcard-time">'+c.time+'</div>'+
+  grid.innerHTML = cards.map(function(c) {
+    var scls = c.status==='waiting' ? 's-wait' : c.status==='called' ? 's-call' : 's-done';
+    var slbl = c.status==='waiting' ? 'Aguardando' : c.status==='called' ? '⚡ Chamado' : '✓ Entregue';
+    return '<div class="vcard ' + c.status + '">' +
+      '<div class="vcard-num">#' + c.num + '</div>' +
+      '<div class="vcard-cliente">' + (c.cliente||'—') + '</div>' +
+      '<div class="vcard-manobrista">' + (c.manobrista ? '🔧 '+c.manobrista : '') + '</div>' +
+      '<div class="vcard-qr"><img src="' + qrSrc(c.num) + '" width="110" height="110" alt="QR"></div>' +
+      '<div class="vstatus ' + scls + '">' + slbl + '</div>' +
+      '<div class="vcard-actions">' +
+        '<button class="btn btn-s btn-sm" onclick="markDelivered(' + c.num + ')">Entregue</button>' +
+        '<button class="btn btn-sm" style="background:var(--surface2);color:var(--red);border:1px solid var(--border)" onclick="removeCard(' + c.num + ')">✕</button>' +
+      '</div>' +
+      '<div class="vcard-time">' + c.time + '</div>' +
     '</div>';
   }).join('');
-}
-
-window._printCards = function(){
-  if(!cards.length){alert('Nenhum cartão registrado');return}
-  var area=document.getElementById('print-area');
-  area.innerHTML=cards.map(function(c){
-    return '<div class="pcrd">'+
-      '<div class="pbrand">'+config.name+'</div>'+
-      '<div class="pnum">#'+c.num+'</div>'+
-      (c.plate?'<div style="font-size:12px;margin:3px 0;color:#333">'+c.plate+'</div>':'')+
-      '<div class="pqr"><img src="'+qrSrc(c.num,c.plate)+'" width="100" height="100"></div>'+
-      '<div class="pinstr">Leia o QR quando quiser ir embora</div>'+
-    '</div>';
-  }).join('');
-  setTimeout(function(){window.print()},1000);
 }
 
 renderCards();
-
-// Navegacao entre abas
-document.querySelectorAll('.nav-tab').forEach(function(btn){
-  btn.addEventListener('click', function(){
-    var id = this.getAttribute('data-page');
-    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
-    document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
-    document.getElementById('page-'+id).classList.add('active');
-    this.classList.add('active');
-    if(id==='painel') renderCards();
-    if(id==='chamadas'){ badgeCount=0; document.getElementById('badge').style.display='none'; }
-  });
-});
 </script>
 </body>
 </html>
