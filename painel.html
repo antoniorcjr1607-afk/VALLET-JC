@@ -77,11 +77,11 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
 <nav>
   <div class="nav-logo">⬡ VALET PRO</div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('chamadas',this)">
+    <button class="nav-tab active" id="tab-chamadas" data-page="chamadas">
       🔔 Chamadas<span class="badge" id="badge" style="display:none">0</span>
     </button>
-    <button class="nav-tab" onclick="showPage('painel',this)">Veículos</button>
-    <button class="nav-tab" onclick="showPage('config',this)">Configurar</button>
+    <button class="nav-tab" id="tab-painel" data-page="painel">Veículos</button>
+    <button class="nav-tab" id="tab-config" data-page="config">Configurar</button>
   </div>
 </nav>
 
@@ -141,6 +141,27 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
 
 <div id="print-area"></div>
 
+<script>
+// showPage precisa ser global — fora do module
+function showPage(id, btn){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(id==='chamadas'){
+    var b=document.getElementById('badge');
+    if(b){b.style.display='none';}
+  }
+}
+function markDelivered(num){ window._markDelivered && window._markDelivered(num); }
+function removeCard(num){ window._removeCard && window._removeCard(num); }
+function clearAll(){ window._clearAll && window._clearAll(); }
+function addCard(){ window._addCard && window._addCard(); }
+function saveConfig(){ window._saveConfig && window._saveConfig(); }
+function clearCalls(){ window._clearCalls && window._clearCalls(); }
+function doneCall(key){ window._doneCall && window._doneCall(key); }
+function printCards(){ window._printCards && window._printCards(); }
+</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -207,7 +228,7 @@ function addCallToUI(data, key, isNew){
   list.insertBefore(div, list.firstChild);
 }
 
-window.doneCall = function(key){
+window._doneCall = function(key){
   var el = document.getElementById('call-' + key);
   if(el) el.remove();
   remove(ref(db, 'chamadas/' + key));
@@ -216,7 +237,7 @@ window.doneCall = function(key){
     list.innerHTML = '<div class="empty"><div class="icon">🔔</div>Aguardando chamadas...</div>';
 }
 
-window.clearCalls = function(){
+window._clearCalls = function(){
   remove(chamadasRef);
   document.getElementById('call-list').innerHTML =
     '<div class="empty"><div class="icon">🔔</div>Aguardando chamadas...</div>';
@@ -245,7 +266,7 @@ function alertSound(){
   }catch(e){}
 }
 
-window.showPage = function(id, btn){
+window._showPage = function(id, btn){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
   document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
   document.getElementById('page-'+id).classList.add('active');
@@ -254,7 +275,7 @@ window.showPage = function(id, btn){
   if(id==='chamadas'){ badgeCount=0; document.getElementById('badge').style.display='none'; }
 }
 
-window.saveConfig = function(){
+window._saveConfig = function(){
   config.name   = document.getElementById('cfg-name').value.trim()||'Valet Pro';
   config.thanks = document.getElementById('cfg-thanks').value.trim()||'Obrigado!';
   localStorage.setItem('vp3_config', JSON.stringify(config));
@@ -273,7 +294,7 @@ function qrSrc(num, plate){
 
 function saveCards(){ localStorage.setItem('vp3_cards', JSON.stringify(cards)); }
 
-window.addCard = function(){
+window._addCard = function(){
   var num   = parseInt(document.getElementById('inp-num').value);
   var cliente = document.getElementById('inp-cliente').value.trim();
   var manobrista = document.getElementById('inp-manobrista').value.trim();
@@ -288,15 +309,15 @@ window.addCard = function(){
   document.getElementById('inp-manobrista').value='';
 }
 
-window.markDelivered = function(num){
+window._markDelivered = function(num){
   var c=cards.find(function(c){return c.num===num});
   if(c){c.status='delivered';saveCards();renderCards()}
 }
-window.removeCard = function(num){
+window._removeCard = function(num){
   cards=cards.filter(function(c){return c.num!==num});
   saveCards();renderCards();
 }
-window.clearAll = function(){
+window._clearAll = function(){
   if(!confirm('Limpar todos?'))return;
   cards=[];saveCards();renderCards();
 }
@@ -325,7 +346,7 @@ function renderCards(){
   }).join('');
 }
 
-window.printCards = function(){
+window._printCards = function(){
   if(!cards.length){alert('Nenhum cartão registrado');return}
   var area=document.getElementById('print-area');
   area.innerHTML=cards.map(function(c){
@@ -341,6 +362,19 @@ window.printCards = function(){
 }
 
 renderCards();
+
+// Navegacao entre abas
+document.querySelectorAll('.nav-tab').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var id = this.getAttribute('data-page');
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+    document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
+    document.getElementById('page-'+id).classList.add('active');
+    this.classList.add('active');
+    if(id==='painel') renderCards();
+    if(id==='chamadas'){ badgeCount=0; document.getElementById('badge').style.display='none'; }
+  });
+});
 </script>
 </body>
 </html>
