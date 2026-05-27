@@ -155,7 +155,7 @@ function showTab(id) {
     document.getElementById('badge').style.display = 'none';
     badgeCount = 0;
   }
-  if(id === 'painel') renderCards();
+  if(id === 'painel' && window._renderCards) window._renderCards();
 }
 
 var badgeCount = 0;
@@ -313,7 +313,7 @@ window.clearAll = function() {
   cards = []; saveCards(); renderCards();
 };
 
-window.renderCards = function() { renderCards(); };
+
 
 function renderCards() {
   var grid = document.getElementById('cards-grid');
@@ -340,6 +340,9 @@ function renderCards() {
 }
 
 renderCards();
+
+// Expor para o showTab global
+window._renderCards = renderCards;
 </script>
 </body>
 </html>
