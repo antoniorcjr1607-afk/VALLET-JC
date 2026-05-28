@@ -59,10 +59,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getDatabase(app);
 
-var params = new URLSearchParams(window.location.search);
-var num    = params.get('n') || '?';
-var evento = params.get('e') ? decodeURIComponent(params.get('e')) : 'Valet Pro';
-var thanks = params.get('t') ? decodeURIComponent(params.get('t')) : 'Seu carro já está sendo buscado. Em instantes estará pronto na saída.';
+var params     = new URLSearchParams(window.location.search);
+var num        = params.get('n') || '?';
+var evento     = params.get('e') ? decodeURIComponent(params.get('e')) : 'Valet Pro';
+var thanks     = params.get('t') ? decodeURIComponent(params.get('t')) : 'Seu carro já está sendo buscado. Em instantes estará pronto na saída.';
+var manobrista = params.get('m') ? decodeURIComponent(params.get('m')) : '—';
+var cliente    = params.get('c') ? decodeURIComponent(params.get('c')) : '—';
 
 document.getElementById('num-display').textContent = '#' + num;
 document.getElementById('brand').textContent  = '⬡ ' + evento.toUpperCase();
@@ -79,6 +81,8 @@ window.avisar = async function(){
     await push(ref(db, 'chamadas'), {
       num: num,
       evento: evento,
+      manobrista: manobrista,
+      cliente: cliente,
       time: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),
       ts: Date.now()
     });
