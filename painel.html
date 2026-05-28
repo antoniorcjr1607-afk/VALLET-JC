@@ -218,19 +218,19 @@ onChildAdded(chamadasRef, function(snapshot) {
   var key  = snapshot.key;
   if(callKeys[key]) return;
   callKeys[key] = true;
-  addCallToUI(data, key);
-  alertSound();
-  updateBadge();
-  // Buscar dados do card local para enriquecer a notificacao
+  // Buscar dados do card ANTES de desenhar a notificacao
   var card = cards.find(function(c){ return String(c.num) === String(data.num); });
   if(card) {
-    data.manobrista = card.manobrista || '—';
-    data.cliente    = card.cliente    || '—';
+    data.manobrista = card.manobrista || data.manobrista || '—';
+    data.cliente    = card.cliente    || data.cliente    || '—';
     if(card.status === 'waiting') { card.status = 'called'; saveCards(); renderCards(); }
   } else {
     data.manobrista = data.manobrista || '—';
     data.cliente    = data.cliente    || '—';
   }
+  addCallToUI(data, key);
+  alertSound();
+  updateBadge();
 });
 
 setTimeout(function(){ primeiraVez = false; }, 2000);
