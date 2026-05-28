@@ -222,7 +222,11 @@ onChildAdded(chamadasRef, function(snapshot) {
   alertSound();
   updateBadge();
   var card = cards.find(function(c){ return String(c.num) === String(data.num); });
-  if(card && card.status === 'waiting') { card.status = 'called'; saveCards(); renderCards(); }
+  if(card) {
+    data.cliente    = data.cliente    || card.cliente    || '—';
+    data.manobrista = data.manobrista || card.manobrista || '—';
+    if(card.status === 'waiting') { card.status = 'called'; saveCards(); renderCards(); }
+  }
 });
 
 setTimeout(function(){ primeiraVez = false; }, 2000);
