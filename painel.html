@@ -221,11 +221,15 @@ onChildAdded(chamadasRef, function(snapshot) {
   addCallToUI(data, key);
   alertSound();
   updateBadge();
+  // Buscar dados do card local para enriquecer a notificacao
   var card = cards.find(function(c){ return String(c.num) === String(data.num); });
   if(card) {
-    data.cliente    = data.cliente    || card.cliente    || '—';
-    data.manobrista = data.manobrista || card.manobrista || '—';
+    data.manobrista = card.manobrista || '—';
+    data.cliente    = card.cliente    || '—';
     if(card.status === 'waiting') { card.status = 'called'; saveCards(); renderCards(); }
+  } else {
+    data.manobrista = data.manobrista || '—';
+    data.cliente    = data.cliente    || '—';
   }
 });
 
@@ -277,7 +281,14 @@ window.saveConfig = function() {
 
 function clientPageURL(num) {
   var base = window.location.href.split('painel.html')[0] + 'cliente.html';
-  return base + '?n=' + num + '&e=' + encodeURIComponent(config.name) + '&t=' + encodeURIComponent(config.thanks);
+  var card = cards.find(function(c){ return c.num === num; });
+  var m = card ? encodeURIComponent(card.manobrista || '') : '';
+  var c = card ? encodeURIComponent(card.cliente    || '') : '';
+  return base + '?n=' + num
+    + '&e=' + encodeURIComponent(config.name)
+    + '&t=' + encodeURIComponent(config.thanks)
+    + '&m=' + m
+    + '&c=' + c;
 }
 
 function qrSrc(num) {
